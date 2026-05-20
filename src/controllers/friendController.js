@@ -40,7 +40,7 @@ exports.sendFriendRequest = async (req, res) => {
 
         const {userAId, userBId} = normalizePair(fromUserId, toUserId);
         const {data: friendship} = await supabase
-            .from('friendships')
+            .from('friends')
             .select('*')
             .eq('user_a_id', userAId)
             .eq('user_b_id', userBId)
@@ -243,7 +243,7 @@ exports.getFriendsList = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const {data, error} = await supabase
+        const {data: friendships, error} = await supabase
             .from('friends')
             .select('*')
             .or(`user_a_id.eq.${userId},user_b_id.eq.${userId}`);
@@ -261,7 +261,7 @@ exports.getFriendsList = async (req, res) => {
             });
         }
 
-        const {data, error: usersError} = await supabase
+        const {data: users, error: usersError} = await supabase
             .from('users')
             .select('*')
             .in('userID', friendIds);
@@ -272,7 +272,7 @@ exports.getFriendsList = async (req, res) => {
 
         res.json({
             success: true,
-            data: data || [],
+            data: users || [],
         });
     } catch (error) {
         res.status(500).json({
@@ -285,23 +285,23 @@ exports.getFriendsList = async (req, res) => {
 exports.deleteFriend = async (req, res) => {
     try {
         const userId = req.user.id;
-        const {deleteId} = req.params;
+        const {friendId} = req.params;
 
-        if(!deleteId) {
+        if(!friendId) {
             return res.status(400).json({
                 success: false,
-                error: 'deleteId is required',
+                error: 'friendId is required',
             });
         }
 
-        if(userId === deleteId) {
+        if(userId === friendId) {
             return res.status(400).json({
                 success: false,
                 error: 'Cannot unfriend yourself',
             });
         }
 
-        const {userAId, userBId} = normalizePair(userId, deleteId);
+        const {userAId, userBId} = normalizePair(userId, friendId);
         const {error} = await supabase
             .from('friends')
             .delete()

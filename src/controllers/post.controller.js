@@ -2,7 +2,7 @@ const supabase = require('../config/supabase');
 
 exports.getAllPosts = async (req, res) => {
     try {
-        const {data, error} = await supabase.from('posts')
+        const {data, error} = await supabase
             .from('postdata')
             .select('*')
             .order('date', {ascending: false});
