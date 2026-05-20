@@ -32,7 +32,7 @@ exports.register = async (req, res) => {
         }
 
         res.status(201).json({
-            sucess: true,
+            success: true,
             data: {
                 user: authData.user,
                 session: authData.session,
@@ -40,7 +40,7 @@ exports.register = async (req, res) => {
         });
     }catch (error) {
         res.status(400).json({
-            sucess: false,
+            success: false,
             error: error.message,
         });
     }
