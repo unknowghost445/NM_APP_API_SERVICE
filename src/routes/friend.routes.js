@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const friendController = require('../controllers/friendController');
+const friendController = require('../controllers/friend.controller');
 const authMiddleware = require('../middleware/auth');
 
 router.post('/request', authMiddleware, friendController.sendFriendRequest);
