@@ -2,7 +2,7 @@ const supabase = require('../config/supabase');
 
 function normalizePair(u1, u2) {
     return u1 < u2 ? {userAId: u1, userBId: u2} : {userAId: u2, userBId: u1};
-};
+}
 
 exports.sendFriendRequest = async (req, res) => {
     try {
@@ -29,7 +29,7 @@ exports.sendFriendRequest = async (req, res) => {
             .eq('from_user_id', fromUserId)
             .eq('to_user_id', toUserId)
             .eq('status', 'pending')
-            .single();
+            .maybeSingle();
 
         if(existing) {
             return res.status(400).json({
@@ -44,7 +44,7 @@ exports.sendFriendRequest = async (req, res) => {
             .select('*')
             .eq('user_a_id', userAId)
             .eq('user_b_id', userBId)
-            .single();
+            .maybeSingle();
 
         if(friendship) {
             return res.status(400).json({
@@ -52,7 +52,7 @@ exports.sendFriendRequest = async (req, res) => {
                 error: 'You are already friends',
             });
         }
-        let date = new Date();
+
         const {data, error} = await supabase
             .from('friend_requests')
             .insert({
@@ -358,7 +358,6 @@ exports.getFriendSuggestions = async (req, res) => {
             success: true,
             data: suggestedFriends,
         });
-
     } catch (error) {
         res.status(500).json({
             success: false,
